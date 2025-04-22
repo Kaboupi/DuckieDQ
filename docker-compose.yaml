@@ -1,0 +1,24 @@
+services:
+  db-postgres:
+    image: postgres:13.3
+    container_name: db-postgres
+    hostname: db-postgres
+    environment:
+      POSTGRES_DB: postgres_db
+      POSTGRES_USER: postgres_user
+      POSTGRES_PASSWORD: postgres_password
+    ports:
+      - "5445:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      # - ./source/init_scripts/init_source.sql:/docker-entrypoint-initdb.d/init_source.sql:ro
+      # - ./source/source_data:/source_data:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres_user -d postgres_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+volumes:
+  postgres-data:

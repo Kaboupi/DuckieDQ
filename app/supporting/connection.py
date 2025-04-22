@@ -57,18 +57,22 @@ class Connection:
     
     def query(self, sql: str, params: tuple = ()) -> Any:
         self.connect()
-        return self.connector.execute_query(sql, params)
+        self.logger.info(f"Executing query: '{sql}' {'with params: ' + params if params else ''}")
+        result = self.connector.execute_query(sql, params)
+        self.logger.info(f'Fetch result: {result}')
+        self.connector.close()
+        return result
     
 
 if __name__ == '__main__':
     db_params = {
-        'host': 'db-postgres',
-        'port': '5432',
+        'host': 'localhost',
+        'port': '5445',
         'database': 'postgres_db',
         'schema': 'default',
         'username': 'postgres_user',
         'password': 'postgres_password',
     }
     conn = Connection(db_params, 'postgres')
-    conn.query('SELECT 1;')
+    conn.query('SELECT * FROM pg_namespace;')
     
