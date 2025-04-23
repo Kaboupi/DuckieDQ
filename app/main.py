@@ -1,4 +1,4 @@
-from DuckieDQ.DuckieDQ import DuckieDQ
+from duckiedq.core.duckiedq import DuckieDQ
 
 import argparse
 

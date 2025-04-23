@@ -1,6 +1,6 @@
 from typing import Dict, List, Any
 import logging
-from .setup.logging_config import setup_logging
+from ..config.logging_config import setup_logging
 import yaml
 from pathlib import Path
 

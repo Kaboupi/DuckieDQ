@@ -15,9 +15,9 @@ from typing import  Dict, List, Any
 import logging
 import pandas as pd
 
-from .supporting.setup.logging_config import setup_logging
-from .supporting.connection import Connection
-from .supporting.parser import DQParser
+from ..config.logging_config import setup_logging
+from .connection import Connection
+from .parser import DQParser
 
 setup_logging()
 

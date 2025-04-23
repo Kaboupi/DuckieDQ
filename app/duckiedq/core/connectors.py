@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Dict, Any, List, Tuple
 import logging
-from .setup.logging_config import setup_logging
+from ..config.logging_config import setup_logging
 import psycopg2 as pg
 from psycopg2.extensions import string_types
 import clickhouse_connect
