@@ -20,5 +20,23 @@ services:
       retries: 5
     restart: unless-stopped
 
+  db-clickhouse:
+    image: clickhouse/clickhouse-server:24.9.3
+    container_name: db-clickhouse
+    hostname: db-clickhouse
+    ports:
+      - "8123:8123"
+      - "9000:9000"
+    volumes:
+      - clickhouse-data:/var/lib/clickhouse
+      - ./db/clickhouse:/etc/clickhouse-server
+    healthcheck:
+      test: ["CMD", "sh", "-c", "wget --no-verbose --tries=1 http://127.0.0.1:8123/ping || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 2
+      start_period: 1m
+
 volumes:
   postgres-data:
+  clickhouse-data:

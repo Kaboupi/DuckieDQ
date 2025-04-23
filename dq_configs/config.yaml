@@ -1,0 +1,37 @@
+kind: apps/DQ
+version: v1
+metadata:
+  project: test_dq
+  name: test_table
+  annotations:
+    owner: Kaboupi
+    description: >-
+      Sample DQ script for table `test_table` both in:
+        - Postgres
+        - Clickhouse
+tasks:
+  transfer_postgres_weekly:
+    version: v1
+    spec:
+      asset:
+        key: facb8e28-3006-4414-9737-a4e4bd2db62b
+        description: Weekly turnover for Postgres
+        connection:
+          host: localhost
+          port: 8123
+          database: default
+          username: admin
+          password: admin
+        type: postgres
+      params:
+        type: SQL
+        query: >-
+          select
+            date_trunc('week', "Date") :: DATE valid_from_dttm
+            , SUM("Cost") as cost
+            , SUM("Revenue") as revenue
+          from dq_project.sales_data sd 
+          group by 1
+          order by 1;
+        fields:
+          dimDate: valid_from_dttm
