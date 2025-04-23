@@ -1,4 +1,3 @@
-from DuckieDQ.supporting.connection import Connection
 from DuckieDQ.DuckieDQ import DuckieDQ
 
 if __name__ == '__main__':

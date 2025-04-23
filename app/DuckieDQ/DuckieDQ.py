@@ -1,10 +1,5 @@
-from sqlalchemy import create_engine
-from typing import Optional, Dict, List, Tuple, Any
-import clickhouse_connect
+from typing import  Dict, List, Any
 import logging
-import pandas as pd
-import psycopg2 as pg
-import yaml
 
 from .supporting.setup.logging_config import setup_logging
 from .supporting.connection import Connection
@@ -30,8 +25,8 @@ class DuckieDQ:
                 conn_query = task_values['conn_query']
                 
                 conn = Connection(conn_dict, conn_type)
-                conn.query(conn_query)
-    
+                result = conn.query(conn_query)
+                self.logger.info(result)
     
     @property
     def version(self) -> str:

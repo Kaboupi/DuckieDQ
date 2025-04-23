@@ -1,7 +1,7 @@
 """
 Class to keep the connection to db
 """
-from typing import Optional, Dict, List, Tuple, Any, Type
+from typing import Optional, Dict, Tuple, Any, Type
 import logging
 from .setup.logging_config import setup_logging
 from .connectors import BaseConnector, PostgresConnector, ClickHouseConnector, MySQLConnector

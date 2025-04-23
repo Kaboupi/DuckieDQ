@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Optional, Dict, List, Tuple, Any
+from typing import Dict, Any
 import logging
 from .setup.logging_config import setup_logging
 import psycopg2 as pg
