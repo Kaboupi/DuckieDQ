@@ -9,9 +9,9 @@ from .connectors import BaseConnector, PostgresConnector, ClickHouseConnector, M
 setup_logging()
 
 CONNECTOR_CLASSES: Dict[str, Type[BaseConnector]] = {
-    'postgres': PostgresConnector,
-    'clickhouse': ClickHouseConnector,
-    'mysql': MySQLConnector
+    'postgres'   : PostgresConnector,
+    'clickhouse' : ClickHouseConnector,
+    'mysql'      : MySQLConnector,
 }
 
 class Connection:
@@ -19,7 +19,7 @@ class Connection:
     
     def __init__(self, db_params: Dict[str, str], conn_type: str) -> None:
         self.logger = logging.getLogger(self.__class__.__name__)
-        self.logger.info(f'Version {self.version}')
+        self.logger.debug(f'Using {self.__class__.__name__} version {self.version}')
         
         self.db_params = db_params
         self.conn_type = conn_type.lower()
@@ -64,6 +64,5 @@ class Connection:
         self.connector.connect()
         self.logger.info(f"Executing query: '{sql}' {'with params: ' + params if params else ''}")
         result = self.connector.execute_query(sql, params)
-        self.logger.info(f'Fetch result: {result}')
         self.connector.close()
-        return result    
+        return result

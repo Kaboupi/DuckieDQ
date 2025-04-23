@@ -1,0 +1,7 @@
+venv
+dq_configs
+db
+README.md
+docker-compose.yaml
+.gitignore
+**/__pycache__
