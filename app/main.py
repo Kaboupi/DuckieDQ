@@ -12,4 +12,3 @@ if __name__ == '__main__':
     path = args.path
     
     duckie = DuckieDQ(path)
-    duckie.execute_dq()

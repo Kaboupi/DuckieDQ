@@ -11,7 +11,7 @@ class DQParser:
     
     def __init__(self, config_path: str):
         self.logger = logging.getLogger(self.__class__.__name__)
-        self.logger.info(f'Version {self.version}')
+        self.logger.debug(f'Version {self.version}')
         
         self.configs: List[Dict[str, Any]] = []
         self.config_path = Path(config_path).resolve()
@@ -20,7 +20,7 @@ class DQParser:
             self.logger.info(f'Start to read config {self.config_path}')
             self.configs.append(self._parse_config(self.config_path))
         elif self.config_path.is_dir():
-            self.logger.info(f'Start to scan dir {self.config_path} for YAML/YML files.')
+            self.logger.info(f"Start to scan dir '{self.config_path}' for YAML/YML files.")
             for config_file in self.config_path.glob('*.y*ml'):
                 self.configs.append(self._parse_config(config_file))
         else:
@@ -41,7 +41,7 @@ class DQParser:
         db_config = {}
         for task_name, task_values in task_list.items():
             version, spec = task_values.get('version'), task_values.get('spec')
-            asset, params = spec['asset'], spec['params']
+            asset, params = spec.get('asset'), spec.get('params')
             
             db_config[task_name] = {
                 'conn_dict': asset.get('connection'),

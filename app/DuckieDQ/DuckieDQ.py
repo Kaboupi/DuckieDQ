@@ -1,5 +1,19 @@
+"""*
+*                       DuckieDQ v0.0.1
+*------------------------------------------------------------
+*  🦆 Data Quality Framework for validating your pipelines
+*
+*  🔍 List of supported databases:
+*     - PostgreSQL
+*     - ClickHouse
+*     - MySQL
+*     - SQLite
+*  📄 YAML Configuration files
+*  🧪 SQL-queries for validation 
+*"""
 from typing import  Dict, List, Any
 import logging
+import pandas as pd
 
 from .supporting.setup.logging_config import setup_logging
 from .supporting.connection import Connection
@@ -12,21 +26,36 @@ class DuckieDQ:
     
     def __init__(self, config_path: str) -> None:
         self.logger = logging.getLogger(self.__class__.__name__)
-        self.logger.info(f'Version {self.version}')
+        self.logger.debug(f'Using {self.__class__.__name__} version {self.version}')
         
+        for line in __doc__.split('\n'):
+            self.logger.info(line)
+        
+        self.df_list: list = []
         self.configs: List[Dict[str, Any]] = DQParser(config_path).parse()
-    
-    def execute_dq(self):
+        
         for config in self.configs:
-            for task_name, task_values in config.items():
-                self.logger.info(f"Start to perform '{task_name}' task.")
-                conn_dict = task_values['conn_dict']
-                conn_type = task_values['conn_type']
-                conn_query = task_values['conn_query']
-                
-                conn = Connection(conn_dict, conn_type)
-                result = conn.query(conn_query)
-                self.logger.info(result)
+            for config_item, config_value in config.items():
+                self.logger.debug(f"Start to perform '{config_item}' task.")
+                data, columns = self._execute_dq(config_value)
+                self.df_list.append(pd.DataFrame(data, columns=columns))
+        # self.logger.debug(self.df_list)
+            
+    def _execute_dq(self, config: Dict[str, Any]):
+        conn_dict = config.get('conn_dict')
+        conn_type = config.get('conn_type')
+        conn_query = config.get('conn_query')
+        conn_uuid = config.get('_uniq_uuid')
+        
+        conn = Connection(conn_dict, conn_type)
+        data, cols = conn.query(conn_query)
+
+        self.logger.info(f'Success! Number of rows retrieved: {len(data)}.')
+        return (data, cols)
+    
+    def _print_header(self) -> None:
+        for doc_line in __doc__.split('\n'):
+            self.logger.info(doc_line)
     
     @property
     def version(self) -> str:
