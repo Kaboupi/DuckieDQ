@@ -1,8 +1,9 @@
 from abc import ABC, abstractmethod
-from typing import Optional, Dict, List, Tuple, Any
+from typing import Dict, Any
 import logging
-from logging_config.logging_config import setup_logging
+from .setup.logging_config import setup_logging
 import psycopg2 as pg
+import clickhouse_connect
 
 setup_logging()
 
@@ -24,7 +25,7 @@ class BaseConnector(ABC):
         ...
     
     @abstractmethod
-    def get_uri(self) -> str:
+    def uri(self) -> str:
         ...
         
     @abstractmethod
@@ -37,12 +38,9 @@ class BaseConnector(ABC):
     
 class PostgresConnector(BaseConnector):
     __version: str = 'v0.0.1'
-    
-    def __init__(self, config: Dict[str, str]):
-        super().__init__(config)
         
     def connect(self):
-        self.logger.info(f'Connecting to postgres at {self.get_uri}')
+        self.logger.info(f'Connecting to postgres at {self.uri}')
         
         self.connection = pg.connect(
             host=self.config['host'],
@@ -62,28 +60,37 @@ class PostgresConnector(BaseConnector):
                 return []
     
     @property
-    def get_uri(self) -> str:
+    def uri(self) -> str:
         return f"postgresql://{self.config['username']}:{'*' * 5}@{self.config['host']}:{self.config['port']}/{self.config['database']}"
 
 
 class ClickHouseConnector(BaseConnector):
     __version: str = 'v0.0.1'
-    
-    def __init__(self, config: Dict[str, str]):
-        super().__init__(config)
+        
+    def connect(self):
+        self.logger.info(f'Connecting to clickhouse at {self.uri}')
+        
+        self.connection = clickhouse_connect.get_client(
+            host=self.config['host'],
+            port=int(self.config['port']),
+            username=self.config['username'],
+            password=self.config['password'],
+            database=self.config['database'] or 'default',
+        )
+        return self.connection
+
+    def execute_query(self, query: str, params: tuple = ()) -> list:
+        return self.connection.query(query).result_rows
         
     @property
-    def get_uri(self) -> str:
-        return ''
+    def uri(self) -> str:
+        return f'jdbc:clickhouse://{self.config['host']}:{self.config['port']}@{self.config['username']}:{'*' * 5}'
 
 
 class MySQLConnector(BaseConnector):
     __version: str = 'v0.0.1'
-    
-    def __init__(self, config: Dict[str, str]):
-        super().__init__(config)
         
     @property
-    def get_uri(self) -> str:
+    def uri(self) -> str:
         return ''
     

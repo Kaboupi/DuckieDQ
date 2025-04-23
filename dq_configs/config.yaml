@@ -1,0 +1,53 @@
+kind: apps/DQ
+version: v1
+metadata:
+  project: test_dq
+  name: test_table
+  annotations:
+    owner: Kaboupi
+    description: >-
+      Sample DQ script for table `test_table` both in:
+        - Postgres
+        - Clickhouse
+tasks:
+  postgres_data:
+    version: v0.0.1
+    spec:
+      asset:
+        key: facb8e28-3006-4414-9737-a4e4bd2db62b
+        description: Data from postgres
+        connection:
+          host: localhost
+          port: 5445
+          database: postgres_db
+          username: postgres_user
+          password: postgres_password
+        type: postgres
+      params:
+        type: SQL
+        query: >-
+          select
+            *
+          from pg_namespace
+          limit 1;
+        fields:
+          dimDate: valid_from_dttm
+  clickhouse_data:
+    version: v0.0.1
+    spec:
+      asset:
+        key: facb8e28-3006-4414-9737-a4e4bd2db62b
+        description: Data from clickhouse
+        connection:
+          host: localhost
+          port: 8123
+          database: default
+          username: admin
+          password: admin
+        type: clickhouse
+      params:
+        type: SQL
+        query: >-
+          select 15;
+        fields:
+          dimDate: valid_from_dttm

@@ -1,10 +1,10 @@
 """
 Class to keep the connection to db
 """
-from typing import Optional, Dict, List, Tuple, Any, Type
+from typing import Optional, Dict, Tuple, Any, Type
 import logging
-from logging_config.logging_config import setup_logging
-from connectors import BaseConnector, PostgresConnector, ClickHouseConnector, MySQLConnector
+from .setup.logging_config import setup_logging
+from .connectors import BaseConnector, PostgresConnector, ClickHouseConnector, MySQLConnector
 
 setup_logging()
 
@@ -26,6 +26,8 @@ class Connection:
                 
         self._validate_required('host', db_params.get('host'))
         self._validate_required('port', db_params.get('port'))
+        self._validate_required('username', db_params.get('username'))
+        self._validate_required('database', db_params.get('database'))
         self._validate_choice('conn_type', self.conn_type, self.supported_connectors)
         
         self.connector: BaseConnector = self._instantiate_connector()
@@ -55,20 +57,13 @@ class Connection:
     def connect(self):
         return self.connector.connect()
     
+    def close(self):
+        self.connector.close()
+    
     def query(self, sql: str, params: tuple = ()) -> Any:
-        self.connect()
-        return self.connector.execute_query(sql, params)
-    
-
-if __name__ == '__main__':
-    db_params = {
-        'host': 'db-postgres',
-        'port': '5432',
-        'database': 'postgres_db',
-        'schema': 'default',
-        'username': 'postgres_user',
-        'password': 'postgres_password',
-    }
-    conn = Connection(db_params, 'postgres')
-    conn.query('SELECT 1;')
-    
+        self.connector.connect()
+        self.logger.info(f"Executing query: '{sql}' {'with params: ' + params if params else ''}")
+        result = self.connector.execute_query(sql, params)
+        self.logger.info(f'Fetch result: {result}')
+        self.connector.close()
+        return result    

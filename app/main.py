@@ -1,4 +1,5 @@
-
+from DuckieDQ.DuckieDQ import DuckieDQ
 
 if __name__ == '__main__':
-    pass
+    duckie = DuckieDQ('../dq_configs')
+    duckie.execute_dq()
