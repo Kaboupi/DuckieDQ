@@ -10,28 +10,44 @@ metadata:
         - Postgres
         - Clickhouse
 tasks:
-  transfer_postgres_weekly:
-    version: v1
+  postgres_data:
+    version: v0.0.1
     spec:
       asset:
         key: facb8e28-3006-4414-9737-a4e4bd2db62b
-        description: Weekly turnover for Postgres
+        description: Data from postgres
+        connection:
+          host: localhost
+          port: 5445
+          database: postgres_db
+          username: postgres_user
+          password: postgres_password
+        type: postgres
+      params:
+        type: SQL
+        query: >-
+          select
+            *
+          from pg_namespace
+          limit 1;
+        fields:
+          dimDate: valid_from_dttm
+  clickhouse_data:
+    version: v0.0.1
+    spec:
+      asset:
+        key: facb8e28-3006-4414-9737-a4e4bd2db62b
+        description: Data from clickhouse
         connection:
           host: localhost
           port: 8123
           database: default
           username: admin
           password: admin
-        type: postgres
+        type: clickhouse
       params:
         type: SQL
         query: >-
-          select
-            date_trunc('week', "Date") :: DATE valid_from_dttm
-            , SUM("Cost") as cost
-            , SUM("Revenue") as revenue
-          from dq_project.sales_data sd 
-          group by 1
-          order by 1;
+          select 15;
         fields:
           dimDate: valid_from_dttm
