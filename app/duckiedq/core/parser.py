@@ -48,6 +48,7 @@ class DQParser:
                 'conn_type': asset.get('type'),
                 'conn_query': params.get('query'),
                 '_uniq_uuid': asset.get('key'),
+                '_dim_date': params.get('dimDate'),
             }
         
         return db_config

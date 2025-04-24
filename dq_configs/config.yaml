@@ -26,11 +26,9 @@ tasks:
       params:
         type: SQL
         query: >-
-          select *
-          from pg_database
-          limit 10;
-        fields:
-          dimDate: valid_from_dttm
+          SELECT *
+          FROM public.my_table;
+        dimDate: sale_date
   clickhouse_data:
     version: v0.0.1
     spec:
@@ -47,8 +45,6 @@ tasks:
       params:
         type: SQL
         query: >-
-          select *
-          from system.query_log
-          limit 5;
-        fields:
-          dimDate: valid_from_dttm
+          SELECT *
+          FROM default.my_table;
+        dimDate: sale_date

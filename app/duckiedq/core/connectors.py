@@ -43,13 +43,17 @@ class PostgresConnector(BaseConnector):
     def connect(self):
         self.logger.debug(f'Connecting to postgres at {self.uri}')
         
-        self.connection = pg.connect(
-            host=self.config.get('host'),
-            port=self.config.get('port'),
-            dbname=self.config.get('database'),
-            user=self.config.get('username'),
-            password=self.config.get('password')
-        )
+        try:
+            self.connection = pg.connect(
+                host=self.config.get('host'),
+                port=self.config.get('port'),
+                dbname=self.config.get('database'),
+                user=self.config.get('username'),
+                password=self.config.get('password')
+            )
+        except Exception as e:
+            raise ConnectionError(f'Couldn\'t connect to Postgres: {e}')
+            
         return self.connection
     
     def execute_query(self, query: str, params: tuple = ()) -> Tuple[List[str], List[str]]:
