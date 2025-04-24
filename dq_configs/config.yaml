@@ -14,7 +14,6 @@ tasks:
     version: v0.0.1
     spec:
       asset:
-        key: facb8e28-3006-4414-9737-a4e4bd2db62b
         description: Data from postgres
         connection:
           host: localhost
@@ -33,7 +32,6 @@ tasks:
     version: v0.0.1
     spec:
       asset:
-        key: facb8e28-3006-4414-9737-a4e4bd2db62b
         description: Data from clickhouse
         connection:
           host: localhost

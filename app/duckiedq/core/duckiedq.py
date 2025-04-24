@@ -35,24 +35,23 @@ class DuckieDQ:
         
         for config in self.configs:
             for task_name, task_config in config.items():
-                self.logger.debug(f"Executing task: '{task_name}'")
-                self.df_list.append(self._run_task(task_config))
-        # self.logger.info(self.df_list)
+                self.df_list.append(self._read_and_transform(task_name, task_config))
             
-    def _run_task(self, config: Dict[str, Any]) -> pd.DataFrame:
+    def _read_and_transform(self, task_name: str, config: Dict[str, Any]) -> pd.DataFrame:
+        self.logger.info(f"Executing task: '{task_name}'")
         conn_dict = config.get('conn_dict')
         conn_type = config.get('conn_type')
         conn_query = config.get('conn_query')
-        conn_uuid = config.get('_uniq_uuid')
         conn_dim_date = config.get('_dim_date')
          
         conn = Connection(conn_dict, conn_type)
         data, columns = conn.query(conn_query)
+        columns = [f'{task_name}__{col}' if col != conn_dim_date else col for col in columns]
         
-        self.logger.info(f'Retrieved {len(data)} rows for UUID: {conn_uuid}')
-        
+        self.logger.info(f'Retrieved {len(data)} rows for.')
+
         df = pd.DataFrame(data, columns=columns)
-        df['conn_uuid'] = conn_uuid
+        df.set_index([conn_dim_date], inplace=True)
         return df
     
     def _print_header(self) -> None:
